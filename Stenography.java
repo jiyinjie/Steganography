@@ -17,7 +17,17 @@ public class Stenography {
 		if (args[0].equals("-D")){
 			//decrypt
 			sten.filename = args[2];
-			sten.decrypt(args[1], args[2]);
+			try{					
+				File v_file = new File(sten.filename);
+				FileOutputStream fos = new FileOutputStream(v_file);
+				PrintStream out = new PrintStream(fos);
+				System.setOut(out);
+				sten.decrypt(args[1], args[2]);
+				
+			} catch(IOException e){
+				System.err.println("Writing Error");
+			}
+			
 		}
 		else
 		{
@@ -80,7 +90,7 @@ public class Stenography {
 		   		}
 	   		}
 	   	
-		//System.out.println(output);
+		System.out.println(output);
 		return output;
 		
 	}
@@ -110,9 +120,9 @@ public class Stenography {
 	    
 
 	    
-	    		FileInputStream fstream = new FileInputStream(msg);
-	    		DataInputStream in = new DataInputStream(fstream);
-	    		br = new BufferedReader(new InputStreamReader(in));
+        FileInputStream fstream = new FileInputStream(msg);
+	    DataInputStream in = new DataInputStream(fstream);
+	    br = new BufferedReader(new InputStreamReader(in));
 
 
     	int[] msgChars = new int[3]; //Holds 3 chars by their ASCII values
@@ -165,7 +175,7 @@ public class Stenography {
     				row = height - 1;
     				col = width - 1;
     				color = convertRGB(img.getRGB(col,row));
-    				img.setRGB(col, row, calc_RGB(color,0,0,0);
+    				img.setRGB(col, row, calc_RGB(color,0,0,0));
 
     				//Second bit
     				col--;
@@ -175,7 +185,7 @@ public class Stenography {
     					col=0;
     				}
     				color = convertRGB(img.getRGB(col,row));
-    				img.setRGB(col, row, calc_RGB(color,0,0,0);
+    				img.setRGB(col, row, calc_RGB(color,0,0,0));
 
     				//First bit
     				col--;
@@ -185,7 +195,8 @@ public class Stenography {
     					col=0;
     				}
     				color = convertRGB(img.getRGB(col,row));
-    				img.setRGB(col, row, calc_RGB(color,color[0],0,0);
+    				img.setRGB(col, row, calc_RGB(color,color[0],0,0));
+    				br.close();
     				return;
     			}
     			//System.out.println("Row: "+row+" Col: "+col);
