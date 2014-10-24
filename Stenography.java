@@ -273,7 +273,8 @@ public class Stenography {
 	private String[] read_3Bytes(BufferedImage img, int row, int column)
 	{ //Need to read 24 bits = 24 integer vals
 		String[] bitstrings = {"","",""}; //each string should be 8 bits
-	//3 bits per rgb * 8 times = 24 bits
+		
+		//3 bits per rgb * 8 times = 24 bits
 	    for(int count=0; count < 8; count++)
 	     {
 	     	long rgb = img.getRGB(column, row); //Three bits from rgb
@@ -297,10 +298,10 @@ public class Stenography {
    		}
    		
 
-   		System.out.println(bitstrings[0] + " "+ (char)Integer.parseInt(bitstrings[0], 2));
+/*  	System.out.println(bitstrings[0] + " "+ (char)Integer.parseInt(bitstrings[0], 2));
    		System.out.println(bitstrings[1] + " "+ (char)Integer.parseInt(bitstrings[1], 2));
    		System.out.println(bitstrings[2] + " "+ (char)Integer.parseInt(bitstrings[2], 2));
-   		System.out.println();
+   		System.out.println();*/
 
    		return bitstrings;
 	}
