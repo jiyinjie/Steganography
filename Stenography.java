@@ -53,9 +53,9 @@ public class Stenography {
         }
 
         String output="";
-        for(int row = 0; row < img.getHeight(); row++)
-        
-        	for(int column = 0; column < img.getWidth(); column++)
+        int column = 0;
+        int row = 0;
+        while(row < img.getHeight())
 	       	{
 	        	String[] bitarray = read_3Bytes(img, row, column);
 
@@ -147,6 +147,10 @@ public class Stenography {
     		{
     			//Get the RGB value at the current pixel
     			int[] color = convertRGB(img.getRGB(col,row));
+    			if(col == (width-1) && row == (height-1))
+    			{
+    				color[0] = 0;
+    			}
     			//System.out.println("Row: "+row+" Col: "+col);
     			//System.out.println("Old Red: "+color[0]);
      			//System.out.println("Old Green: "+color[1]);
