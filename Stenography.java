@@ -35,7 +35,7 @@ public class Stenography {
         int height = img.getHeight();
         int width = img.getWidth();
         
-        int amountPixel = height * width;
+        long amountPixel = height * width;
 
 	// This prints the image height and width and a specific pixel. 
 
@@ -50,24 +50,51 @@ public class Stenography {
     		do{
     			strLine = br.readLine();
     			String[]bytes = getLineByte(strLine);
+    			if (bytes[0].equals("00000000"))
+    				break;
     			int index = 0;
     			for (int i = 0; i < height; i++){
-    				for (int j = 0; j< width; j++){
+    				for (int j = 0; j< width; j++){    	
+    					if (count != 0 && count %8 == 0){
+    						index ++;
+    					}
+    					int rgb = Math.abs(img.getRGB(j, i));
+    					int red = rgb & 0xFF;
+    					int green = (rgb>>8) & 0xFF;
+    					int blue = (rgb>>16) & 0xFF;
+    					System.out.println(red + "; "+green+"; "+ blue);
     					if(bytes[index].charAt(count%8) == '0'){
     						if (count%3 == 1){
-    							
+    							red = calcPixel(red, 0);
     						}
     						else if (count%3 == 2){
-    							
+    							green = calcPixel(green, 0);
     						}
     						else if (count%3 == 0){
-    							
-    						}
-    							
-    					}
+    							blue = calcPixel(blue,0);				
+    						}  				
     						
+    					}
+    					else if (bytes[index].charAt(count%8) == '1'){
+    						if (count%3 == 1){
+    							red = calcPixel(red, 1);
+    						}
+    						else if (count%3 == 2){
+    							green = calcPixel(green, 1);
+    						}
+    						else if (count%3 == 0){
+    							blue = calcPixel(blue, 1);				
+    						}  
+    					}
+    					count ++;
+    					System.out.println("red: "+red+"green: "+green+"blue: " + blue);
+    					if (index == bytes.length-1)
+    						break;
     				}
+    				if (index == bytes.length-1)
+						break;
     			}
+    			System.out.println(count);
     		}while (strLine != null);
     		in.close();
     		}catch (IOException e){
@@ -97,5 +124,20 @@ public class Stenography {
 		}
 		return binary;
 		
+	}
+	
+	private int calcPixel(int val, int mod){
+		if (mod == 0 && val%2 == 1){
+			if(val == 255)
+				return val --;
+			return val +1;
+		}
+		else if (mod == 1 && val%2 == 0){
+			if(val == 255)
+				return val --;
+			return val +1;
+		}
+		else return val;
+			
 	}
 }
