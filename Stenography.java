@@ -177,6 +177,7 @@ public class Stenography {
     		}
 
     	}
+    	in.close();
     	File output_file = new File("output.bmp");
     	ImageIO.write(img,"bmp",output_file);
 	}
