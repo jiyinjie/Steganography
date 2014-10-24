@@ -99,10 +99,10 @@ public class Stenography {
     					if (count != 0 && count %8 == 0){
     						index ++;
     					}
-    					int rgb = Math.abs(img.getRGB(j, i));
-    					int red = rgb & 0xFF;
-    					int green = (rgb>>8) & 0xFF;
-    					int blue = (rgb>>16) & 0xFF;
+    					long rgb = img.getRGB(j, i);
+    					int red = (int) rgb & 0xFF;
+    					int green = (int) (rgb>>8) & 0xFF;
+    					int blue = (int) (rgb>>16) & 0xFF;
     					System.out.println(red + "; "+green+"; "+ blue);
     					if(bytes[index].charAt(count%8) == '0'){
     						if (count%3 == 1){
