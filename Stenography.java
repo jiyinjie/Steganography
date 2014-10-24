@@ -85,7 +85,7 @@ public class Stenography {
 		   			}
 		   		}
 		   		column+=8;
-		   		if(column >= img.getWidth())
+		   		if(column >= (img.getWidth()-1))
 		   		{
 		   			column -= (img.getWidth()-1);
 		   			row+=1;
