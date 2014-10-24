@@ -34,6 +34,10 @@ public class Stenography {
 			sten.filename = args[1].substring(0, args[1].indexOf('.'));
 			sten.extension = args[1].substring(args[1].indexOf('.')+1, args[1].length());
 			try{
+				File v_file = new File("input.txt");
+				FileOutputStream fos = new FileOutputStream(v_file);
+				PrintStream out = new PrintStream(fos);
+				System.setOut(out);
 				sten.encrypt(args[1],args[2]);
 			}catch(IOException e)
 			{
@@ -137,7 +141,6 @@ public class Stenography {
     		for(int count = 0; count < 3; count++)
     		{
     			msgChars[count] = br.read();
-    			
     			if(msgChars[count] == -1)
     			{
     				end_of_msg = true;
@@ -159,11 +162,13 @@ public class Stenography {
     		{
     			//Convert ASCII value to a string of the binary representation
     			String bin = Integer.toBinaryString(msgChars[k]);
+    			
     			//Pad 0's on the left
     			bitarray+= ("00000000"+bin).substring(bin.length());
+    			
     		}
+    		System.out.println(bitarray);
    			
-   			//System.out.println(bitarray);
     		
     		for(int k = 0; k < 8; k++)
     		{
@@ -203,9 +208,9 @@ public class Stenography {
     				return;
     			}
     			//System.out.println("Row: "+row+" Col: "+col);
-    			//System.out.println("Old Red: "+color[0]);
-     			//System.out.println("Old Green: "+color[1]);
-    			//System.out.println("Old Blue: "+color[2]);
+//    			System.out.println("Old Red: "+color[0]);
+//     			System.out.println("Old Green: "+color[1]);
+//    			System.out.println("Old Blue: "+color[2]);
 
   
     			//Add the value in the bitstring to either r,g, or b
@@ -218,9 +223,9 @@ public class Stenography {
     			//Store the new r,g,b values into the pixel rgb
     			int new_rgb_value = calc_RGB(color,r,g,b);
     			img.setRGB(col, row, new_rgb_value);
-    			//System.out.println("New Red: "+ color[0]);
-    			//System.out.println("New Green: "+color[1]);
-    			//System.out.println("New Blue: "+ color[2]);
+//    			System.out.println("New Red: "+ color[0]);
+//    			System.out.println("New Green: "+color[1]);
+//    			System.out.println("New Blue: "+ color[2]);
     			col++;
     			if(col==width)
     			{
@@ -256,7 +261,9 @@ public class Stenography {
 				old_color-= 1;
 			else
 				old_color+= 1;
+			//System.out.println(old_color + " bit value: "+value);
 		}
+		
 		return old_color;
 	}
 
@@ -295,10 +302,10 @@ public class Stenography {
    		}
    		
 
-   		/*System.out.println(bitstrings[0]);
-   		System.out.println(bitstrings[1]);
-   		System.out.println(bitstrings[2]);
-   		System.out.println();*/
+   		System.out.print(bitstrings[0]);
+   		System.out.print(bitstrings[1]);
+   		System.out.print(bitstrings[2] + "\n");
+   		//System.out.println();
 
    		return bitstrings;
 	}
