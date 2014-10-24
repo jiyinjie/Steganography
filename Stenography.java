@@ -75,7 +75,9 @@ public class Stenography {
 		   			int val = Integer.parseInt(bitarray[count],2);
 		   			//System.out.println(val);
 		   			if(val != 0)
-		   				output+=""+(char)val;
+		   			{
+		   				output+=(char)val;
+		   			}
 		   			else
 		   			{
 		   				System.out.println(output);
@@ -89,8 +91,7 @@ public class Stenography {
 		   			row+=1;
 		   		}
 	   		}
-	   	
-		System.out.println(output);
+	   	System.out.println(output);
 		return output;
 		
 	}
@@ -161,7 +162,9 @@ public class Stenography {
     			//Pad 0's on the left
     			bitarray+= ("00000000"+bin).substring(bin.length());
     		}
-   			System.out.println(bitarray);
+   			
+   			//System.out.println(bitarray);
+    		
     		for(int k = 0; k < 8; k++)
     		{
     			//Get the R,G,B values at the current pixel
@@ -292,10 +295,10 @@ public class Stenography {
    		}
    		
 
-   		System.out.println(bitstrings[0]);
+   		/*System.out.println(bitstrings[0]);
    		System.out.println(bitstrings[1]);
    		System.out.println(bitstrings[2]);
-   		System.out.println();
+   		System.out.println();*/
 
    		return bitstrings;
 	}
