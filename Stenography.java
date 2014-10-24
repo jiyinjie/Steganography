@@ -48,25 +48,34 @@ public class Stenography {
 
         String output="";
         for(int row = 0; row < img.getHeight(); row++)
-        {
+        
         	for(int column = 0; column < img.getWidth(); column++)
-	        {
+	        
+	       	while(true)
+	       	{
 	        	String[] bitarray = read_3Bytes(img, row, column);
 
 		   	/*Converts the 3 bytes to characters that are added to output string*/
 		   		for(int count = 0; count < 3; count++)
 		   		{
 		   			int val = Integer.parseInt(bitarray[count],2);
+		   			System.out.println(val);
 		   			if(val != 0)
-		   				output+=(char)val;
+		   				output+=""+(char)val;
 		   			else
 		   			{
 		   				System.out.println(output);
 		   				return output;
 		   			}
 		   		}
+		   		column+=8;
+		   		if(column >= img.getWidth())
+		   		{
+		   			column -= (img.getWidth()-1);
+		   			row+=1;
+		   		}
 	   		}
-	   	}
+	   	
 		System.out.println();
 		return output;
 		
@@ -133,26 +142,43 @@ public class Stenography {
     		for(int k = 0; k < 8; k++)
     		{
     			//Get the RGB value at the current pixel
-    			int[] color = convertRGB(img.getRGB(row,col++));
+    			int[] color = convertRGB(img.getRGB(col,row));
+    			/*System.out.println("Row: "+row+" Col: "+col);
+    			System.out.println("Old Red: "+color[0]);
+     			System.out.println("Old Green: "+color[1]);
+    			System.out.println("Old Blue: "+color[2]);*/
+
+  
+    			//Add the value in the bitstring to either r,g, or b
+    			for(int color_count=0; color_count < 3; color_count++)
+    			{
+    				if(color[color_count]%2 != Integer.parseInt(""+bitarray.charAt(k*3+color_count))%2)
+    				{
+    					color[color_count]+=1;
+    					color[color_count] = color[color_count] % 256;	
+    				}
+    			}
+    			//Store the new r,g,b values into the pixel rgb
+    			String str_rgb = "00000000"+Integer.toBinaryString(color[2])+
+    								Integer.toBinaryString(color[1])+
+    									Integer.toBinaryString(color[0]);
+/*    			System.out.println("New Red: "+ color[0]);
+    			System.out.println("New Green: "+color[1]);
+    			System.out.println("New Blue: "+ color[2]);*/
+
+    			img.setRGB(col, row, Integer.parseInt(str_rgb,2));
+
+    			col++;
     			if(col==width)
     			{
     				col=0;
     				row++;
     			}
-    			//Add the value in the bitstring to either r,g, or b
-    			for(int color_count=0; color_count < 3; color_count++)
-    			{
-    				color[color_count]+=Integer.parseInt(""+bitarray.charAt(k*3+color_count));
-    				color[color_count] = color[color_count] % 256;	
-    			}
-    			//Store the new r,g,b values into the pixel rgb
-    			String str_rgb = "00000000"+Integer.toBinaryString(color[0])+
-    								Integer.toBinaryString(color[1])+
-    									Integer.toBinaryString(color[2]);
-    			img.setRGB(col, row, Integer.parseInt(str_rgb,2));
     		}
 
     	}
+    	File output_file = new File("output.bmp");
+    	ImageIO.write(img,"bmp",output_file);
 	}
 
 	private int[] convertRGB(long rgb)
@@ -170,141 +196,31 @@ public class Stenography {
 	//3 bits per rgb * 8 times = 24 bits
 	    for(int count=0; count < 8; count++)
 	     {
-	     	long rgb = img.getRGB(row, column++); //Three bits from rgb
-	     	
-	     	if(column == img.getWidth())
-	     	{
-	     		column = 0;
-	     		row++;
-	     	}
+	     	long rgb = img.getRGB(column, row); //Three bits from rgb
 
 	     	int[] color = convertRGB(rgb);
 
-    		for(int k = 0; k <2; k++)
+    		for(int k = 0; k <3; k++)
    			{
    				if(color[k] % 2 == 0)
    					bitstrings[(count*3 + k)/8]+='0';
    				else
    					bitstrings[(count*3 + k)/8]+='1';
    			}
+   			   		column++;
+   		if(column == img.getWidth())
+	     	{
+	     		column = 0;
+	     		row++;
+	     	}
    		}
+   		
+
+   		/*System.out.println(bitstrings[0]);
+   		System.out.println(bitstrings[1]);
+   		System.out.println(bitstrings[2]);
+   		System.out.println();*/
+
    		return bitstrings;
-	}
-
-
-
-	private void readFiles(String image, String msg){
-		BufferedImage img = null;
-        try {
-            img = ImageIO.read(new File(image));
-        } catch (IOException e) {
-        	System.err.println("image could not be opened");
-        }
-        int height = img.getHeight();
-        int width = img.getWidth();
-        long amountPixel = height * width;
-
-	// This prints the image height and width and a specific pixel. 
-
-        System.out.println("filename: " +image +"\nnumber of pixels: "+ amountPixel+ "\nheight: "+height  + "\nwidth: " +  width);
-        
-        try{
-    		FileInputStream fstream = new FileInputStream(msg);
-    		DataInputStream in = new DataInputStream(fstream);
-    		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-    		String strLine;
-    		int count = 0;
-    		do{
-    			strLine = br.readLine();
-    			String[]bytes = getLineByte(strLine);
-    			if (bytes[0].equals("00000000"))
-    				break;
-    			int index = 0;
-    			for (int i = 0; i < height; i++){
-    				for (int j = 0; j< width; j++){    	
-    					if (count != 0 && count %8 == 0){
-    						index ++;
-    					}
-    					long rgb = img.getRGB(j, i);
-    					int red = (int) rgb & 0xFF;
-    					int green = (int) (rgb>>8) & 0xFF;
-    					int blue = (int) (rgb>>16) & 0xFF;
-    					System.out.println(red + "; "+green+"; "+ blue);
-    					if(bytes[index].charAt(count%8) == '0'){
-    						if (count%3 == 1){
-    							red = calcPixel(red, 0);
-    						}
-    						else if (count%3 == 2){
-    							green = calcPixel(green, 0);
-    						}
-    						else if (count%3 == 0){
-    							blue = calcPixel(blue,0);				
-    						}  				
-    						
-    					}
-    					else if (bytes[index].charAt(count%8) == '1'){
-    						if (count%3 == 1){
-    							red = calcPixel(red, 1);
-    						}
-    						else if (count%3 == 2){
-    							green = calcPixel(green, 1);
-    						}
-    						else if (count%3 == 0){
-    							blue = calcPixel(blue, 1);				
-    						}  
-    					}
-    					count ++;
-    					System.out.println("red: "+red+"green: "+green+"blue: " + blue);
-    					if (index == bytes.length-1)
-    						break;
-    				}
-    				if (index == bytes.length-1)
-						break;
-    			}
-    			System.out.println(count);
-    		}while (strLine != null);
-    		in.close();
-    		}catch (IOException e){
-    			System.err.println("Error: "+ e.toString());
-    		}
-    	}
-	
-	private String[] getLineByte(String line){
-		
-		if (line == null){
-			String[] binary = new String[1];
-			binary[0] = "00000000";
-			System.out.println(binary[0]);
-			return binary;
-		}
-		
-		byte[] bytes = line.getBytes();
-		String[] binary = new String[bytes.length];
-		String pad = String.format("%0" + 8 + 'd', 0);
-		
-		for (int i = 0; i < bytes.length; i++){
-			
-			String s = Integer.toBinaryString(bytes[i]);
-			s = pad.substring(s.length()) + s;
-			binary[i] = s;
-			System.out.println(s);
-		}
-		return binary;
-		
-	}
-	
-	private int calcPixel(int val, int mod){
-		if (mod == 0 && val%2 == 1){
-			if(val == 255)
-				return val --;
-			return val +1;
-		}
-		else if (mod == 1 && val%2 == 0){
-			if(val == 255)
-				return val --;
-			return val +1;
-		}
-		else return val;
-			
 	}
 }
