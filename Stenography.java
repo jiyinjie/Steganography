@@ -97,6 +97,13 @@ public class Stenography {
         int height = img.getHeight();
         int width = img.getWidth();
         long amountPixel = height * width;
+        
+        //Need at least 3 pixels to store one character
+        if(amountPixel < 3)
+        {
+        	System.out.println("File too small");
+        	return;
+        }
 
 		// This prints the image height and width and a specific pixel. 
         System.out.println("filename: " +image +"\nnumber of pixels: "+ amountPixel+ "\nheight: "+height  + "\nwidth: " +  width);
@@ -107,14 +114,15 @@ public class Stenography {
 	    		DataInputStream in = new DataInputStream(fstream);
 	    		br = new BufferedReader(new InputStreamReader(in));
 
-    	int[] msgChars = new int[3]; //Holds 3 chars
+
+    	int[] msgChars = new int[3]; //Holds 3 chars by their ASCII values
     	boolean end_of_msg = false;
     	int row = 0;
     	int col = 0; 
     	
     	while(!end_of_msg)
     	{
-    		//Read 3 characters from message
+    		//Read 3 characters from message and converts it to ASCII value
     		for(int count = 0; count < 3; count++)
     		{
     			msgChars[count] = br.read();
@@ -138,6 +146,7 @@ public class Stenography {
 
     		for(int k = 0; k < 3; k++)
     		{
+    			//Convert ASCII value to a string of the binary representation
     			String bin = Integer.toBinaryString(msgChars[k]);
     			//Pad 0's on the left
     			bitarray+= ("00000000"+bin).substring(bin.length());
@@ -145,11 +154,39 @@ public class Stenography {
    			System.out.println(bitarray);
     		for(int k = 0; k < 8; k++)
     		{
-    			//Get the RGB value at the current pixel
+    			//Get the R,G,B values at the current pixel
     			int[] color = convertRGB(img.getRGB(col,row));
-    			if(col == (width-1) && row == (height-1))
+
+    			//If we run out of space...
+    			if(col >= (width-1) && row >= (height-1))
     			{
-    				color[0] = 0;
+    				//Exceeded capacity must set last 2.66 pixels (8 bits) to 0
+    				//Third bit to be changed: row= height-1; col=width-1;
+    				row = height - 1;
+    				col = width - 1;
+    				color = convertRGB(img.getRGB(col,row));
+    				img.setRGB(col, row, calc_RGB(color,0,0,0);
+
+    				//Second bit
+    				col--;
+    				if(col<0)
+    				{
+    					row--;
+    					col=0;
+    				}
+    				color = convertRGB(img.getRGB(col,row));
+    				img.setRGB(col, row, calc_RGB(color,0,0,0);
+
+    				//First bit
+    				col--;
+    				if(col<0)
+    				{
+    					row--;
+    					col=0;
+    				}
+    				color = convertRGB(img.getRGB(col,row));
+    				img.setRGB(col, row, calc_RGB(color,color[0],0,0);
+    				return;
     			}
     			//System.out.println("Row: "+row+" Col: "+col);
     			//System.out.println("Old Red: "+color[0]);
@@ -158,27 +195,18 @@ public class Stenography {
 
   
     			//Add the value in the bitstring to either r,g, or b
-    			for(int color_count=0; color_count < 3; color_count++)
-    			{
-    				if(color[color_count]%2 != Integer.parseInt(""+bitarray.charAt(k*3+color_count))%2)
-    				{
-    					if(color[color_count] == 255)
-    						color[color_count] -= 1;
-    					else
-    						color[color_count]+=1;
-    					color[color_count] = color[color_count] % 256;	
-    				}
-    			}
+    			//r,g,b will either be a 0 or 1
+    			int r = Integer.parseInt(""+bitarray.charAt(k*3+0));
+    			int g = Integer.parseInt(""+bitarray.charAt(k*3+1));
+    			int b = Integer.parseInt(""+bitarray.charAt(k*3+2));
+    			
+
     			//Store the new r,g,b values into the pixel rgb
-    			String str_rgb = "00000000"+Integer.toBinaryString(color[2])+
-    								Integer.toBinaryString(color[1])+
-    									Integer.toBinaryString(color[0]);
+    			int new_rgb_value = calc_RGB(color,r,g,b);
+    			img.setRGB(col, row, new_rgb_value);
     			//System.out.println("New Red: "+ color[0]);
     			//System.out.println("New Green: "+color[1]);
     			//System.out.println("New Blue: "+ color[2]);
-
-    			img.setRGB(col, row, Integer.parseInt(str_rgb,2));
-
     			col++;
     			if(col==width)
     			{
@@ -192,6 +220,30 @@ public class Stenography {
     	String outputName = filename+"-steg";
     	File output_file = new File(outputName+"."+extension);
     	ImageIO.write(img,extension,output_file);
+	}
+
+	private int calc_RGB(int[] rgb, int r, int g, int b)
+	{
+		rgb[0]=calc_color(rgb[0],r);
+		rgb[1]=calc_color(rgb[1],g);
+		rgb[2]=calc_color(rgb[2],b);
+    	String str_rgb = "00000000"+Integer.toBinaryString(rgb[2])+
+    						Integer.toBinaryString(rgb[1])+
+   								Integer.toBinaryString(rgb[0]);
+   		
+   		int new_rgb_value = Integer.parseInt(str_rgb,2);
+   		
+   		return new_rgb_value;
+	}
+	private int calc_color(int old_color, int value){
+		if(old_color%2 != value%2)
+		{
+			if(old_color == 255)
+				old_color-= 1;
+			else
+				old_color+= 1;
+		}
+		return old_color;
 	}
 
 	private int[] convertRGB(long rgb)
