@@ -24,7 +24,36 @@ public class Stenography {
 		return true;				
 	}
 	
-	
+	private String decrypt(String encrypted)
+	{
+		//byte[] input = new byte[8];
+		String bitarray="";
+		String output="";
+		char newest = 0;
+		do{
+			for(int filled=0; filled <8; filled++) //need to read 8 bits
+			{
+				for(int k=0; k<encrypted.length(); k+=32) //every int (4 bytes or 32 bits) read is one bit
+				{
+					int input = Integer.parseInt(encrypted.substring(k,k+31),2);
+					if(input%2 == 0)
+					{
+						bitarray+="0";
+					}
+					else
+					{
+						bitarray+="1";
+					}
+				}
+
+			}
+			newest=(char)Integer.parseInt(bitarray,2);
+			output+=newest;
+
+		}while(newest!= 0);
+		return output;
+	}
+
 	private void readFiles(String image, String msg){
 		BufferedImage img = null;
         try {
@@ -98,4 +127,5 @@ public class Stenography {
 		return binary;
 		
 	}
+
 }
