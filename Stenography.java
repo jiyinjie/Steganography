@@ -29,6 +29,14 @@ public class Stenography {
 	
 	private String decrypt(String encrypted)
 	{
+		BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(image));
+        } catch (IOException e) {
+        	System.err.println("image could not be opened");
+        }
+
+        
 		//byte[] input = new byte[8];
 		String bitarray="";
 		String output="";
@@ -68,7 +76,6 @@ public class Stenography {
         }
         int height = img.getHeight();
         int width = img.getWidth();
-        
         long amountPixel = height * width;
 
 	// This prints the image height and width and a specific pixel. 
