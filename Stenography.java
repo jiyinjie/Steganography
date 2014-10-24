@@ -4,6 +4,9 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 public class Stenography {
+	private String filename;
+	private String extension;
+	
 	
 	public static void main(String args[]){
 		Stenography sten = new Stenography();
@@ -13,10 +16,13 @@ public class Stenography {
 		}
 		if (args[0].equals("-D")){
 			//decrypt
+			sten.filename = args[2];
 			sten.decrypt(args[1], args[2]);
 		}
 		else
 		{
+			sten.filename = args[1].substring(0, args[1].indexOf('.'));
+			sten.extension = args[1].substring(args[1].indexOf('.')+1, args[1].length());
 			try{
 				sten.encrypt(args[1],args[2]);
 			}catch(IOException e)
@@ -50,8 +56,6 @@ public class Stenography {
         for(int row = 0; row < img.getHeight(); row++)
         
         	for(int column = 0; column < img.getWidth(); column++)
-	        
-	       	while(true)
 	       	{
 	        	String[] bitarray = read_3Bytes(img, row, column);
 
@@ -59,7 +63,7 @@ public class Stenography {
 		   		for(int count = 0; count < 3; count++)
 		   		{
 		   			int val = Integer.parseInt(bitarray[count],2);
-		   			System.out.println(val);
+		   			//System.out.println(val);
 		   			if(val != 0)
 		   				output+=""+(char)val;
 		   			else
@@ -76,7 +80,7 @@ public class Stenography {
 		   		}
 	   		}
 	   	
-		System.out.println();
+		//System.out.println(output);
 		return output;
 		
 	}
@@ -143,10 +147,10 @@ public class Stenography {
     		{
     			//Get the RGB value at the current pixel
     			int[] color = convertRGB(img.getRGB(col,row));
-    			/*System.out.println("Row: "+row+" Col: "+col);
-    			System.out.println("Old Red: "+color[0]);
-     			System.out.println("Old Green: "+color[1]);
-    			System.out.println("Old Blue: "+color[2]);*/
+    			//System.out.println("Row: "+row+" Col: "+col);
+    			//System.out.println("Old Red: "+color[0]);
+     			//System.out.println("Old Green: "+color[1]);
+    			//System.out.println("Old Blue: "+color[2]);
 
   
     			//Add the value in the bitstring to either r,g, or b
@@ -154,7 +158,10 @@ public class Stenography {
     			{
     				if(color[color_count]%2 != Integer.parseInt(""+bitarray.charAt(k*3+color_count))%2)
     				{
-    					color[color_count]+=1;
+    					if(color[color_count] == 255)
+    						color[color_count] -= 1;
+    					else
+    						color[color_count]+=1;
     					color[color_count] = color[color_count] % 256;	
     				}
     			}
@@ -162,9 +169,9 @@ public class Stenography {
     			String str_rgb = "00000000"+Integer.toBinaryString(color[2])+
     								Integer.toBinaryString(color[1])+
     									Integer.toBinaryString(color[0]);
-/*    			System.out.println("New Red: "+ color[0]);
-    			System.out.println("New Green: "+color[1]);
-    			System.out.println("New Blue: "+ color[2]);*/
+    			//System.out.println("New Red: "+ color[0]);
+    			//System.out.println("New Green: "+color[1]);
+    			//System.out.println("New Blue: "+ color[2]);
 
     			img.setRGB(col, row, Integer.parseInt(str_rgb,2));
 
@@ -178,8 +185,9 @@ public class Stenography {
 
     	}
     	in.close();
-    	File output_file = new File("output.bmp");
-    	ImageIO.write(img,"bmp",output_file);
+    	String outputName = filename+"-steg";
+    	File output_file = new File(outputName+"."+extension);
+    	ImageIO.write(img,extension,output_file);
 	}
 
 	private int[] convertRGB(long rgb)
@@ -217,10 +225,10 @@ public class Stenography {
    		}
    		
 
-   		/*System.out.println(bitstrings[0]);
+   		System.out.println(bitstrings[0]);
    		System.out.println(bitstrings[1]);
    		System.out.println(bitstrings[2]);
-   		System.out.println();*/
+   		System.out.println();
 
    		return bitstrings;
 	}
