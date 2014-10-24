@@ -108,18 +108,16 @@ public class Stenography {
         int height = img.getHeight();
         int width = img.getWidth();
         long amountPixel = height * width;
-        
+
+		// This prints the image height and width and a specific pixel. 
+        System.out.println("filename: " +image +"\nnumber of pixels: "+ amountPixel+ "\nheight: "+height  + "\nwidth: " +  width);
+	    
         //Need at least 3 pixels to store one character
         if(amountPixel < 3)
         {
         	System.out.println("File too small");
         	return;
         }
-
-		// This prints the image height and width and a specific pixel. 
-        System.out.println("filename: " +image +"\nnumber of pixels: "+ amountPixel+ "\nheight: "+height  + "\nwidth: " +  width);
-	    
-
 	    
         FileInputStream fstream = new FileInputStream(msg);
 	    DataInputStream in = new DataInputStream(fstream);
@@ -160,15 +158,14 @@ public class Stenography {
     			//Convert ASCII value to a string of the binary representation
     			String bin = Integer.toBinaryString(msgChars[k]);
     			//Pad 0's on the left
-    			bitarray+= ("00000000"+bin).substring(bin.length());
+    			bitarray += ("00000000"+bin).substring(bin.length());
     		}
    			
    			//System.out.println(bitarray);
     		
     		for(int k = 0; k < 8; k++)
     		{
-    			//Get the R,G,B values at the current pixel
-    			int[] color = convertRGB(img.getRGB(col,row));
+    			int[] color;
 
     			//If we run out of space...
     			if(col >= (width-1) && row >= (height-1))
@@ -202,6 +199,10 @@ public class Stenography {
     				br.close();
     				return;
     			}
+
+    			//Get the R,G,B values at the current pixel
+    			color = convertRGB(img.getRGB(col,row));
+    			
     			//System.out.println("Row: "+row+" Col: "+col);
     			//System.out.println("Old Red: "+color[0]);
      			//System.out.println("Old Green: "+color[1]);
@@ -222,7 +223,7 @@ public class Stenography {
     			//System.out.println("New Green: "+color[1]);
     			//System.out.println("New Blue: "+ color[2]);
     			col++;
-    			if(col==width)
+    			if(col>=(width))
     			{
     				col=0;
     				row++;
@@ -286,7 +287,8 @@ public class Stenography {
    				else
    					bitstrings[(count*3 + k)/8]+='1';
    			}
-   			   		column++;
+   		
+   		column++;
    		if(column == img.getWidth())
 	     	{
 	     		column = 0;
@@ -295,10 +297,10 @@ public class Stenography {
    		}
    		
 
-   		/*System.out.println(bitstrings[0]);
-   		System.out.println(bitstrings[1]);
-   		System.out.println(bitstrings[2]);
-   		System.out.println();*/
+   		System.out.println(bitstrings[0] + " "+ (char)Integer.parseInt(bitstrings[0], 2));
+   		System.out.println(bitstrings[1] + " "+ (char)Integer.parseInt(bitstrings[1], 2));
+   		System.out.println(bitstrings[2] + " "+ (char)Integer.parseInt(bitstrings[2], 2));
+   		System.out.println();
 
    		return bitstrings;
 	}
