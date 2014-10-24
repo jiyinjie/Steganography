@@ -53,7 +53,18 @@ public class Stenography {
     			int index = 0;
     			for (int i = 0; i < height; i++){
     				for (int j = 0; j< width; j++){
-
+    					if(bytes[index].charAt(count%8) == '0'){
+    						if (count%3 == 1){
+    							
+    						}
+    						else if (count%3 == 2){
+    							
+    						}
+    						else if (count%3 == 0){
+    							
+    						}
+    							
+    					}
     						
     				}
     			}
@@ -67,8 +78,9 @@ public class Stenography {
 	private String[] getLineByte(String line){
 		
 		if (line == null){
-			String[] binary = new String[0];
+			String[] binary = new String[1];
 			binary[0] = "00000000";
+			System.out.println(binary[0]);
 			return binary;
 		}
 		
