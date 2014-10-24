@@ -34,10 +34,10 @@ public class Stenography {
 			sten.filename = args[1].substring(0, args[1].indexOf('.'));
 			sten.extension = args[1].substring(args[1].indexOf('.')+1, args[1].length());
 			try{
-				File v_file = new File("input.txt");
-				FileOutputStream fos = new FileOutputStream(v_file);
-				PrintStream out = new PrintStream(fos);
-				System.setOut(out);
+//				File v_file = new File("input.txt");
+//				FileOutputStream fos = new FileOutputStream(v_file);
+//				PrintStream out = new PrintStream(fos);
+//				System.setOut(out);
 				sten.encrypt(args[1],args[2]);
 			}catch(IOException e)
 			{
@@ -81,10 +81,14 @@ public class Stenography {
 		   			if(val != 0)
 		   			{
 		   				output+=(char)val;
+		   				if (val == 82){
+		   					System.out.println("this is not suppose to happen");
+		   				}
+		   				System.out.print((char)val);
 		   			}
 		   			else
 		   			{
-		   				System.out.println(output);
+		   				//System.out.println(output);
 		   				return output;
 		   			}
 		   		}
@@ -95,7 +99,7 @@ public class Stenography {
 		   			row+=1;
 		   		}
 	   		}
-	   	System.out.println(output);
+	   	//System.out.println(output);
 		return output;
 		
 	}
@@ -202,6 +206,7 @@ public class Stenography {
     				color = convertRGB(img.getRGB(col,row));
     				img.setRGB(col, row, calc_RGB(color,color[0],0,0));
     				br.close();
+    				System.err.println("message has been truncated");
     				return;
     			}
 
@@ -252,7 +257,7 @@ public class Stenography {
    								Integer.toBinaryString(rgb[0]);
    		
    		int new_rgb_value = Integer.parseInt(str_rgb,2);
-   		
+   		System.out.print(rgb[0] + rgb[1] + rgb[2]);
    		return new_rgb_value;
 	}
 	private int calc_color(int old_color, int value){
@@ -310,9 +315,10 @@ public class Stenography {
    		System.out.println(bitstrings[2] + " "+ (char)Integer.parseInt(bitstrings[2], 2));
    		System.out.println();*/
 
-   		System.out.print(bitstrings[0]);
-   		System.out.print(bitstrings[1]);
-   		System.out.print(bitstrings[2] + "\n");
+//   		System.out.print(bitstrings[0] +"\t");
+//   		System.out.print(bitstrings[1] +"\t");
+//   		
+//   		System.out.print(bitstrings[2] + "\n");
    		//System.out.println();
 
    		return bitstrings;
