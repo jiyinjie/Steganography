@@ -11,6 +11,9 @@ public class Stenography {
 			System.err.println("Please enter valid commands");
 			return;
 		}
+		if (args[0].equals("-D")){
+			//decrypt
+		}
 		sten.readFiles(args[1],args[2]);
 	}
 	
@@ -51,7 +54,9 @@ public class Stenography {
 			output+=newest;
 
 		}while(newest!= 0);
+		System.out.println(output);
 		return output;
+		
 	}
 
 	private void readFiles(String image, String msg){
