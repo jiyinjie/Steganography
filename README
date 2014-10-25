@@ -1,0 +1,19 @@
+1. Comparing your original and modified images carefully, can you detect *any* difference visually (that is, in the appearance of the image)?
+
+No, there doesn't seem to be any visual differences to the naked eye, even if we put the two pictures next to each other.
+
+2. Can you think of other ways you might hide the message in image files (or in other types of files)?
+
+If both parties have access to the original picture, then you can compare the differences between pictures. Other ways would be hiding messages in different sequences, instead of going horizontally across the image, you could go diagonally or a predetermined path; this will make breaking the encryption harder.
+
+3. Can you invent ways to increase the bandwidth of the channel?
+
+If both parties have access to original picture, each pixel can potentially transmit 24 bits of information. You could also optimize based on pixel color scheme, for example if you have a black pixel you could add 2 bits because changes are less obvious.
+
+4. Suppose you were tasked to build an "image firewall" that would block images containing hidden messages. Could you do it? How might you approach this problem?
+
+It would be pretty difficult to have a method to prevent all encryption methods. I would create a log that contains all known methods and run decryption algorithm on each image with methods that is in the log.
+
+5. Does this fit our definition of a covert channel? Explain your answer.
+
+It doesn't really meet our definition of covert channel. In our definition, a high level subject must manipulate the file and the low level subject can observe the change. In this case, there is no high or low subject, and the system does not explicity forbid the flow of images between two users. This is manipulating files to behave differently to transmit messages which is more closely related to encryption.
