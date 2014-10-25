@@ -231,6 +231,9 @@ public class Steganography {
     				img.setRGB(col, row, calc_RGB(color,color[0],0,0));
     				br.close();
     				System.err.println("message has been truncated");
+    				String outputName = filename+"-steg";
+    		    	File output_file = new File(outputName+"."+extension);
+    		    	ImageIO.write(img,extension,output_file);
     				return;
     			}
 
