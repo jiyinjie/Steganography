@@ -322,7 +322,21 @@ public class Steganography {
 		//3 bits per rgb * 8 times = 24 bits
 	    for(int count=0; count < 8; count++)
 	     {
-	     	long rgb = img.getRGB(column, row); //Three bits from rgb
+	     	long rgb=0;
+	     	if(column < img.getWidth() && row < img.getHeight())
+	     	{
+	     		rgb = img.getRGB(column, row); //Three bits from rgb
+	     	}
+	     	else
+	     	{
+	     		if(bitstrings[0].equals(""))
+	     			bitstrings[0]="00000000";
+	     		else if(bitstrings[1].equals(""))
+	     			bitstrings[1]="00000000";
+	     		else
+	     			bitstrings[2]="00000000";	     		
+	     		break;
+	     	}
 
 	     	int[] color = convertRGB(rgb);
 
@@ -338,6 +352,7 @@ public class Steganography {
         int[] dimensions = pixelArithmetic(row, column, img.getHeight(), img.getWidth(), 1);
    		row = dimensions[0];
         column = dimensions[1];
+
    		}
    		
 
