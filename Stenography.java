@@ -69,41 +69,66 @@ public class Stenography {
         String output="";
         int column = 0;
         int row = 0;
+        int[] dimensions = {row, column};
         while(row < img.getHeight())
 	       	{
+                /*bitarray will contain the bitstring representation for an
+                ASCII character*/
 	        	String[] bitarray = read_3Bytes(img, row, column);
 
 		   	/*Converts the 3 bytes to characters that are added to output string*/
 		   		for(int count = 0; count < 3; count++)
 		   		{
+                    //val contains the ASCII character's decimal code
 		   			int val = Integer.parseInt(bitarray[count],2);
-		   			//System.out.println(val);
+
+                    //If the character is the NULL character, then end
 		   			if(val != 0)
 		   			{
 		   				output+=(char)val;
-		   				if (val == 82){
-		   					System.out.println("this is not suppose to happen");
-		   				}
-		   				System.out.print((char)val);
 		   			}
 		   			else
 		   			{
-		   				//System.out.println(output);
+		   				System.out.println(output);
 		   				return output;
 		   			}
 		   		}
-		   		column+=8;
-		   		if(column >= (img.getWidth()-1))
-		   		{
-		   			column -= (img.getWidth()-1);
-		   			row+=1;
-		   		}
+
+                //3 bytes in the image is 24 bits. Move columns over by 
+                //8 pixels so we move 24 bits because each pixel contains 
+                //3 bits of encrypted info
+                dimensions=pixelArithmetic(row, column, img.getHeight(), img.getWidth(), 8);
+                row = dimensions[0];
+                column = dimensions[1];
 	   		}
 	   	//System.out.println(output);
 		return output;
 		
 	}
-	
+	private int[] pixelArithmetic(int row, int column, int height, int width, int pixels)
+    {
+        int[] rc = {row, column};
+        if(column+pixels >= width)
+        {
+            column+=pixels%width;
+            row+=pixels/width;
+
+            if(column >= width)
+            {
+                column -= width;
+                row++;
+            }
+            rc[0] = row;
+            rc[1] = column;
+        }
+        else
+        {
+            column+=pixels;
+            rc[0] = row;
+            rc[1] = column;
+        }
+        return rc;
+    }
 	private void encrypt(String image, String msg) throws IOException
 	{
 		BufferedReader br;
@@ -136,7 +161,6 @@ public class Stenography {
     	boolean end_of_msg = false;
     	int row = 0;
     	int col = 0; 
-    	
     	while(!end_of_msg)
     	{
     		//Read 3 characters from message and converts it to ASCII value
@@ -169,9 +193,9 @@ public class Stenography {
     			bitarray += ("00000000"+bin).substring(bin.length());
 
     		}
-    		System.out.println(bitarray);
-   			
     		
+            //System.out.println("Bitarray: "+bitarray);
+   			
     		for(int k = 0; k < 8; k++)
     		{
     			int[] color;
@@ -217,7 +241,7 @@ public class Stenography {
 //    			System.out.println("Old Red: "+color[0]);
 //     			System.out.println("Old Green: "+color[1]);
 //    			System.out.println("Old Blue: "+color[2]);
-
+               // System.out.println("<---------------------------->");
   
     			//Add the value in the bitstring to either r,g, or b
     			//r,g,b will either be a 0 or 1
@@ -232,12 +256,9 @@ public class Stenography {
 //    			System.out.println("New Red: "+ color[0]);
 //    			System.out.println("New Green: "+color[1]);
 //    			System.out.println("New Blue: "+ color[2]);
-    			col++;
-    			if(col>=(width))
-    			{
-    				col=0;
-    				row++;
-    			}
+    			int[] dimensions = pixelArithmetic(row,col,height,width,1);
+                row = dimensions[0];
+                col = dimensions[1];
     		}
 
     	}
@@ -251,14 +272,23 @@ public class Stenography {
 	{
 		rgb[0]=calc_color(rgb[0],r);
 		rgb[1]=calc_color(rgb[1],g);
-		rgb[2]=calc_color(rgb[2],b);
-    	String str_rgb = "00000000"+Integer.toBinaryString(rgb[2])+
-    						Integer.toBinaryString(rgb[1])+
-   								Integer.toBinaryString(rgb[0]);
+		rgb[2]=calc_color(rgb[2],b);   						
+   								
+        String bits0 = Integer.toBinaryString(rgb[0]);
+        String bits1 = Integer.toBinaryString(rgb[1]);
+        String bits2 = Integer.toBinaryString(rgb[2]);
+        String str_rgb = "00000000";
+        str_rgb += ("00000000"+bits2).substring(bits2.length());
+        str_rgb += ("00000000"+bits1).substring(bits1.length());
+        str_rgb += ("00000000"+bits0).substring(bits0.length());
+
    		
    		int new_rgb_value = Integer.parseInt(str_rgb,2);
-   		System.out.print(rgb[0] + rgb[1] + rgb[2]);
-   		return new_rgb_value;
+   		/*System.out.println("RGBvalue: "+Integer.toBinaryString(rgb[0]).charAt(7)+
+            Integer.toBinaryString(rgb[1]).charAt(7)+
+            Integer.toBinaryString(rgb[2]).charAt(7));*/
+   		
+        return new_rgb_value;
 	}
 	private int calc_color(int old_color, int value){
 		if(old_color%2 != value%2)
@@ -301,12 +331,10 @@ public class Stenography {
    					bitstrings[(count*3 + k)/8]+='1';
    			}
    		
-   		column++;
-   		if(column == img.getWidth())
-	     	{
-	     		column = 0;
-	     		row++;
-	     	}
+
+        int[] dimensions = pixelArithmetic(row, column, img.getHeight(), img.getWidth(), 1);
+   		row = dimensions[0];
+        column = dimensions[1];
    		}
    		
 
